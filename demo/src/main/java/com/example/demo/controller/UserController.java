@@ -31,6 +31,23 @@ public class UserController {
         String headerValue = "attachment; filename=users_" + currentDateTime + ".csv";
         response.setHeader(headerKey, headerValue);
 
+        List<UserDTO> users = getData();
+
+        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"User ID", "E-mail", "Full Name", "Roles", "Enabled"};
+        String[] nameMapping = {"id", "email", "fullName", "roles", "enabled"};
+
+        csvWriter.writeHeader(csvHeader);
+
+        for (UserDTO user : users) {
+            csvWriter.write(user, nameMapping);
+        }
+
+        csvWriter.close();
+    }
+    
+    private List<UserDTO> getData() {
+        
         UserDTO userLahiru = new UserDTO();
         userLahiru.setId(1L);
         userLahiru.setEmail("lahiru@test.com");
@@ -48,18 +65,8 @@ public class UserController {
         userEnvy.setRoles(role);
 
         List<UserDTO> users = Arrays.asList(userLahiru, userEnvy);
-
-        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        String[] csvHeader = {"User ID", "E-mail", "Full Name", "Roles", "Enabled"};
-        String[] nameMapping = {"id", "email", "fullName", "roles", "enabled"};
-
-        csvWriter.writeHeader(csvHeader);
-
-        for (UserDTO user : users) {
-            csvWriter.write(user, nameMapping);
-        }
-
-        csvWriter.close();
+        
+        return users;
     }
 
 }
